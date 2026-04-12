@@ -1,0 +1,47 @@
+# InsightFlow scrape targets — adjust selectors for each real site.
+# kind: httpx (static HTML) | playwright (JS-heavy)
+# engine defaults to kind if omitted.
+
+defaults:
+  timeout_seconds: 30
+  max_concurrent: 20
+  user_agent: "InsightFlow/0.1 (educational; respect robots.txt)"
+
+targets:
+  - id: books_toscrape_listing
+    kind: httpx
+    urls:
+      - "https://books.toscrape.com/"
+    # Chúng ta định nghĩa đây là dạng danh sách (listing)
+    listing:
+      item_selector: "article.product_pod" 
+      selectors:
+        title: "h3 a"           # Sẽ lấy text hoặc attribute title
+        price: "p.price_color"  # Lấy giá tiền kèm ký hiệu bảng Anh
+        link: "h3 a"            # Lấy đường dẫn chi tiết
+        availability: ".availability" # Kiểm tra còn hàng hay không
+
+  # Example: JS-heavy listing (Playwright) — tune wait_selector for your site
+  - id: demo_listing_js
+    kind: playwright
+    urls:
+      - "https://example.com/"
+    selectors:
+      wait_for: "body"
+      item: "article"
+      title_within: "h2"
+      price_within: ".price"
+      link_within: "a"
+    reviews:
+      selector: ".review-text"
+      rating_selector: ".stars"
+
+  # News-style static pages
+  - id: demo_news
+    kind: httpx
+    urls:
+      - "https://example.com/"
+    news:
+      list_selector: "article"
+      title_selector: "h2"
+      link_selector: "a"
