@@ -52,6 +52,5 @@ Outputs: `data/history/` (Parquet snapshots), `logs/insightflow.log`, and a date
 ## LLM providers
 
 - **OpenAI-compatible:** set `OPENAI_API_URL`, `OPENAI_API_KEY`, `LLM_MODEL`.
-<p align="center">
-<img src="https://raw.githubusercontent.com/I-love-Meat-Fr/InsightFlow/blob/main/src/image/image.png" width="800" alt="System Overview">
-</p>
+- 
+<img src="I-love-Meat-Fr/InsightFlow/blob/main/src/image/image.png" width="800" alt="System Overview">
