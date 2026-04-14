@@ -52,4 +52,3 @@ Outputs: `data/history/` (Parquet snapshots), `logs/insightflow.log`, and a date
 ## LLM providers
 
 - **OpenAI-compatible:** set `OPENAI_API_URL`, `OPENAI_API_KEY`, `LLM_MODEL`.
-- **Ollama:** `OPENAI_API_URL=http://localhost:11434/v1`, `OPENAI_API_KEY=ollama`, and a local model name in `LLM_MODEL`.
