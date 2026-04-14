@@ -66,5 +66,5 @@ Outputs: `data/history/` (Parquet snapshots), `logs/insightflow.log`, and a date
   <img src="https://raw.githubusercontent.com/I-love-Meat-Fr/InsightFlow/main/src/image/dashboard.png" width="800" alt="System Overview">
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/I-love-Meat-Fr/InsightFlow/main/src/image/Target Configuration.png" width="800" alt="System Overview">
+  <img src="https://raw.githubusercontent.com/I-love-Meat-Fr/InsightFlow/main/src/image/Target Configuration2.png" width="800" alt="System Overview">
 </p>
