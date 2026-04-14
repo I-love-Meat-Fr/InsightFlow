@@ -58,7 +58,7 @@ Outputs: `data/history/` (Parquet snapshots), `logs/insightflow.log`, and a date
 * **LinkedIn:** [https://www.linkedin.com/in/quoc-anh-nguyen-716617402/](https://www.linkedin.com/in/quoc-anh-nguyen-716617402/)
 * **GitHub:** [https://github.com/I-love-Meat-Fr](https://github.com/I-love-Meat-Fr)
 
-## Demo UI
+## DESIGN UI
 <p align="center">
   <img src="https://raw.githubusercontent.com/I-love-Meat-Fr/InsightFlow/main/src/image/mainwindow.png" width="800" alt="System Overview">
 </p>
