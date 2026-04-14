@@ -1,4 +1,4 @@
-from insightflow.cli import app
+from insightflow.cli import main
 
 if __name__ == "__main__":
-    app()
+    main()

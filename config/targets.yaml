@@ -21,27 +21,27 @@ targets:
         link: "h3 a"            # Lấy đường dẫn chi tiết
         availability: ".availability" # Kiểm tra còn hàng hay không
 
-  # Example: JS-heavy listing (Playwright) — tune wait_selector for your site
-  - id: demo_listing_js
-    kind: playwright
-    urls:
-      - "https://example.com/"
-    selectors:
-      wait_for: "body"
-      item: "article"
-      title_within: "h2"
-      price_within: ".price"
-      link_within: "a"
-    reviews:
-      selector: ".review-text"
-      rating_selector: ".stars"
+  # # Example: JS-heavy listing (Playwright) — tune wait_selector for your site
+  # - id: demo_listing_js
+  #   kind: playwright
+  #   urls:
+  #     - "https://example.com/"
+  #   selectors:
+  #     wait_for: "body"
+  #     item: "article"
+  #     title_within: "h2"
+  #     price_within: ".price"
+  #     link_within: "a"
+  #   reviews:
+  #     selector: ".review-text"
+  #     rating_selector: ".stars"
 
-  # News-style static pages
-  - id: demo_news
-    kind: httpx
-    urls:
-      - "https://example.com/"
-    news:
-      list_selector: "article"
-      title_selector: "h2"
-      link_selector: "a"
+  # # News-style static pages
+  # - id: demo_news
+  #   kind: httpx
+  #   urls:
+  #     - "https://example.com/"
+  #   news:
+  #     list_selector: "article"
+  #     title_selector: "h2"
+  #     link_selector: "a"

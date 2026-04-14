@@ -18,7 +18,12 @@ app = typer.Typer(no_args_is_help=True, add_completion=False)
 console = Console()
 
 
-@app.command()
+@app.callback()
+def _cli() -> None:
+    """InsightFlow — scrape, analyze, report."""
+
+
+@app.command("run")
 def run(
     config: Path = typer.Option(Path("config/targets.yaml"), "--config", "-c", help="Path to targets YAML"),
     no_send: bool = typer.Option(False, "--no-send", help="Do not send Telegram/email"),
@@ -68,5 +73,9 @@ def run(
     asyncio.run(_go())
 
 
-if __name__ == "__main__":
+def main() -> None:
     app()
+
+
+if __name__ == "__main__":
+    main()

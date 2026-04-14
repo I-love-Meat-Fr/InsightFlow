@@ -28,7 +28,7 @@ dependencies = [
 dev = ["ruff>=0.4"]
 
 [project.scripts]
-insightflow = "insightflow.cli:app"
+insightflow = "insightflow.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
