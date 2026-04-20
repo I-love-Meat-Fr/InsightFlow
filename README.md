@@ -54,7 +54,7 @@ Outputs: `data/history/` (Parquet snapshots), `logs/insightflow.log`, and a date
 - **OpenAI-compatible:** set `OPENAI_API_URL`, `OPENAI_API_KEY`, `LLM_MODEL`.
 ## 🤝 Contact
 
-* **Quoc Anh** - IT Student & AI Researcher
+* **Quoc Anh** - IT Student
 * **LinkedIn:** [https://www.linkedin.com/in/quoc-anh-nguyen-716617402/](https://www.linkedin.com/in/quoc-anh-nguyen-716617402/)
 * **GitHub:** [https://github.com/I-love-Meat-Fr](https://github.com/I-love-Meat-Fr)
 
