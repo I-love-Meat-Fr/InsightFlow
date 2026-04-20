@@ -10,21 +10,21 @@ st.set_page_config(page_title="InsightFlow System", layout="wide")
 st.title("InsightFlow Intelligence Dashboard")
 
 st.sidebar.title("Platform Selection")
-platform = st.sidebar.radio("Select Platform", ["Shopee Flash Sale", "Thegioididong"])
+platform = st.sidebar.radio("Select Platform", ["Shopee flash sale", "Đồ công nghệ"])
 
 data_dir = "data/history"
 if not os.path.exists(data_dir):
     os.makedirs(data_dir, exist_ok=True)
 
-if platform == "Shopee Flash Sale":
+if platform == "Shopee flash sale":
     file_pattern = f"{data_dir}/products_shopee_*.parquet"
     target_status = "Shopee Online"
 else:
-    # TGDD files don't have a specific prefix other than products_2026...
+    # TGDD and Cellphones files don't have a specific prefix other than products_2026...
     # We can exclude shopee files
     all_files = glob.glob(f"{data_dir}/products_*.parquet")
     list_of_files = [f for f in all_files if "shopee" not in os.path.basename(f).lower()]
-    target_status = "TGDD Online"
+    target_status = "Multi-Source Online"
     file_pattern = None # Already filtered
 
 if file_pattern:

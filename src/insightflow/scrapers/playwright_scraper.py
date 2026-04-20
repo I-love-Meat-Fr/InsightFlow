@@ -50,40 +50,102 @@ class PlaywrightScraper:
                         # Cuộn xuống một chút để kích hoạt Render Flash Sale/Danh sách sản phẩm
                         await page.evaluate("window.scrollTo(0, 800);") 
                         await asyncio.sleep(2) # Chờ 2 giây để các component load xong
+                    elif "cellphones.com.vn" in url:
+                        # Chờ page load ổn định
+                        try:
+                            await page.wait_for_load_state("networkidle", timeout=5000)
+                        except:
+                            pass
+                            
+                        # Click the show more button until it's no longer visible
+                        for _ in range(20):
+                            try:
+                                # Kiểm tra xem page có đang bị chuyển hướng không
+                                if "/mobile.html" in page.url and "/mobile/" not in url:
+                                    # Nếu url gốc có /mobile/brand.html mà giờ là /mobile.html -> bị redirect
+                                    logger.warning("Redirected from %s to %s, stopping show more", url, page.url)
+                                    break
+
+                                btn = await page.query_selector("div.cps-block-content_btn-showmore")
+                                if btn and await btn.is_visible():
+                                    await btn.click()
+                                    # Chờ một chút để DOM cập nhật hoặc navigation nếu có
+                                    await asyncio.sleep(2)
+                                else:
+                                    break
+                            except Exception as e:
+                                if "destroyed" in str(e) or "navigation" in str(e).lower():
+                                    logger.warning("Context destroyed during show more for %s, waiting...", url)
+                                    await asyncio.sleep(2)
+                                    await page.wait_for_load_state("domcontentloaded")
+                                    continue
+                                logger.warning("Error clicking show more button on cellphones: %s", e)
+                                break
+                        
+                        # Scroll a bit to ensure lazy loading images/data
+                        try:
+                            await page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
+                            await asyncio.sleep(1)
+                        except:
+                            pass
                     item_sel = str(sel.get("item") or "")
                     if item_sel:
-                        items = await page.query_selector_all(item_sel)
+                        items = []
+                        for retry in range(2):
+                            try:
+                                items = await page.query_selector_all(item_sel)
+                                break
+                            except Exception as e:
+                                if "destroyed" in str(e) or "navigation" in str(e).lower():
+                                    await asyncio.sleep(2)
+                                    await page.wait_for_load_state("domcontentloaded")
+                                    continue
+                                logger.warning("Failed to query_selector_all on %s: %s", url, e)
+                                break
+                            
+                        if not items:
+                            continue
+
                         title_w = str(sel.get("title_within") or "h2")
                         price_w = str(sel.get("price_within") or ".price")
                         orig_price_w = str(sel.get("original_price_within") or "")
                         link_w = str(sel.get("link_within") or "a")
                         for it in items:
-                            title_el = await it.query_selector(title_w)
-                            price_el = await it.query_selector(price_w)
-                            orig_price_el = await it.query_selector(orig_price_w) if orig_price_w else None
-                            link_el = await it.query_selector(link_w)
-                            title = (await title_el.inner_text()).strip() if title_el else None
-                            price_txt = (await price_el.inner_text()).strip() if price_el else None
-                            orig_price_txt = (await orig_price_el.inner_text()).strip() if orig_price_el else None
-                            price, currency = parse_price(price_txt)
-                            original_price, _ = parse_price(orig_price_txt)
-                            href = await link_el.get_attribute("href") if link_el else None
-                            if href and not href.startswith("http"):
-                                href = urljoin(url, href)
-                            item_url = href or url
-                            products.append(
-                                ProductSnapshot(
-                                    target_id=target.id,
-                                    url=item_url,
-                                    title=title,
-                                    price=price,
-                                    original_price=original_price,
-                                    currency=currency,
-                                    specs={},
-                                    scraped_at=utc_now(),
-                                    source_kind="playwright",
+                            try:
+                                title_el = await it.query_selector(title_w)
+                                price_el = await it.query_selector(price_w)
+                                orig_price_el = await it.query_selector(orig_price_w) if orig_price_w else None
+                                link_el = await it.query_selector(link_w)
+                                
+                                title = (await title_el.inner_text()).strip() if title_el else None
+                                price_txt = (await price_el.inner_text()).strip() if price_el else None
+                                orig_price_txt = (await orig_price_el.inner_text()).strip() if orig_price_el else None
+                                price, currency = parse_price(price_txt)
+                                original_price, _ = parse_price(orig_price_txt)
+                                href = await link_el.get_attribute("href") if link_el else None
+                                if href and not href.startswith("http"):
+                                    href = urljoin(url, href)
+                                item_url = href or url
+                                products.append(
+                                    ProductSnapshot(
+                                        target_id=target.id,
+                                        url=item_url,
+                                        title=title,
+                                        price=price,
+                                        original_price=original_price,
+                                        currency=currency,
+                                        specs={},
+                                        scraped_at=utc_now(),
+                                        source_kind="playwright",
+                                    )
                                 )
-                            )
+                            except Exception as e:
+                                # Nếu context bị hủy giữa chừng, bỏ qua các item còn lại của trang này
+                                if "destroyed" in str(e) or "different document" in str(e):
+                                    logger.warning("Context lost while parsing items on %s", url)
+                                    break
+                                logger.warning("Failed to parse an item on %s: %s", url, e)
+                                continue
                     else:
                         title_sel = str(sel.get("title") or "h1")
                         price_sel = str(sel.get("price") or "")
