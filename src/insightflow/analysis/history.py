@@ -26,6 +26,10 @@ class HistoryStore:
         if not rows:
             logger.info("No product rows; skip history parquet write")
             return path
+        for row in rows:
+            if "specs" in row:
+                if not row["specs"] or not isinstance(row["specs"], dict):
+                    row["specs"] = {"status": "no_specs"} 
         df = pd.DataFrame(rows)
         if "scraped_at" in df.columns:
             df["scraped_at"] = pd.to_datetime(df["scraped_at"], utc=True)

@@ -16,6 +16,7 @@ class ProductSnapshot(BaseModel):
     url: str
     title: str | None = None
     price: float | None = None
+    original_price: float | None = None
     currency: str | None = None
     specs: dict[str, str] = Field(default_factory=dict)
     scraped_at: datetime = Field(default_factory=utc_now)

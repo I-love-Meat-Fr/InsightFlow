@@ -46,20 +46,27 @@ class PlaywrightScraper:
                         await page.wait_for_selector(wait_for, timeout=timeout_ms)
                     except Exception as e:
                         logger.warning("wait_for selector missing url=%s sel=%s err=%s", url, wait_for, e)
-
+                    if "thegioididong.com" in url:
+                        # Cuộn xuống một chút để kích hoạt Render Flash Sale/Danh sách sản phẩm
+                        await page.evaluate("window.scrollTo(0, 800);") 
+                        await asyncio.sleep(2) # Chờ 2 giây để các component load xong
                     item_sel = str(sel.get("item") or "")
                     if item_sel:
                         items = await page.query_selector_all(item_sel)
                         title_w = str(sel.get("title_within") or "h2")
                         price_w = str(sel.get("price_within") or ".price")
+                        orig_price_w = str(sel.get("original_price_within") or "")
                         link_w = str(sel.get("link_within") or "a")
                         for it in items:
                             title_el = await it.query_selector(title_w)
                             price_el = await it.query_selector(price_w)
+                            orig_price_el = await it.query_selector(orig_price_w) if orig_price_w else None
                             link_el = await it.query_selector(link_w)
                             title = (await title_el.inner_text()).strip() if title_el else None
                             price_txt = (await price_el.inner_text()).strip() if price_el else None
+                            orig_price_txt = (await orig_price_el.inner_text()).strip() if orig_price_el else None
                             price, currency = parse_price(price_txt)
+                            original_price, _ = parse_price(orig_price_txt)
                             href = await link_el.get_attribute("href") if link_el else None
                             if href and not href.startswith("http"):
                                 href = urljoin(url, href)
@@ -70,6 +77,7 @@ class PlaywrightScraper:
                                     url=item_url,
                                     title=title,
                                     price=price,
+                                    original_price=original_price,
                                     currency=currency,
                                     specs={},
                                     scraped_at=utc_now(),
@@ -79,17 +87,22 @@ class PlaywrightScraper:
                     else:
                         title_sel = str(sel.get("title") or "h1")
                         price_sel = str(sel.get("price") or "")
+                        orig_price_sel = str(sel.get("original_price") or "")
                         title_el = await page.query_selector(title_sel)
                         price_el = await page.query_selector(price_sel) if price_sel else None
+                        orig_price_el = await page.query_selector(orig_price_sel) if orig_price_sel else None
                         title = (await title_el.inner_text()).strip() if title_el else None
                         price_txt = (await price_el.inner_text()).strip() if price_el else None
+                        orig_price_txt = (await orig_price_el.inner_text()).strip() if orig_price_el else None
                         price, currency = parse_price(price_txt)
+                        original_price, _ = parse_price(orig_price_txt)
                         products.append(
                             ProductSnapshot(
                                 target_id=target.id,
                                 url=url,
                                 title=title,
                                 price=price,
+                                original_price=original_price,
                                 currency=currency,
                                 specs={},
                                 scraped_at=utc_now(),

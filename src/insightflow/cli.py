@@ -22,6 +22,20 @@ console = Console()
 def _cli() -> None:
     """InsightFlow — scrape, analyze, report."""
 
+@app.command("shopee-login")
+def shopee_login() -> None:
+    """Launch a browser to manually log in to Shopee and save the session state."""
+    from insightflow.scrapers.shopee import login_and_save_state
+    asyncio.run(login_and_save_state())
+
+@app.command("shopee-crawl")
+def shopee_crawl(
+    url: str = typer.Argument(..., help="Shopee flash sale URL to crawl"),
+    output: str = typer.Option("shopee_auto.html", help="Output file for HTML")
+) -> None:
+    """Fully automated crawl of a Shopee flash sale page using undetected-chromedriver."""
+    from insightflow.scrapers.shopee_auto import auto_scrape_shopee
+    auto_scrape_shopee(url, output)
 
 @app.command("run")
 def run(

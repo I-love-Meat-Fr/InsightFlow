@@ -33,6 +33,8 @@ async def run_pipeline(
     no_llm: bool = False,
     progress: Progress | None = None,
     crawl_task: TaskID | None = None,
+    playwright_scraper = PlaywrightScraper(),
+    
 ) -> dict[str, Any]:
     tf: TargetsFile = load_targets_file(config_path)
     defaults = tf.defaults or {}
@@ -52,13 +54,13 @@ async def run_pipeline(
     if total_targets == 0 and progress is not None and crawl_task is not None:
         progress.update(crawl_task, description="No targets", completed=1)
     for i, target in enumerate(tf.targets):
+        print(f"DEBUG: Target #{i}: {target.id}, kind={target.kind}, selector={target.listing.item_selector if target.listing else 'N/A'}")
         if progress is not None and crawl_task is not None:
             progress.update(crawl_task, description=f"Crawl: {target.id}", completed=i)
         try:
             if target.kind == "httpx":
-                p, n, r = await httpx_scraper.scrape_target(target, defaults)
+                p, r, n = await httpx_scraper.scrape_target(target, defaults)
                 all_products.extend(p)
-                all_news.extend(n)
                 all_reviews.extend(r)
             elif target.kind == "playwright":
                 p, r = await pw_scraper.scrape_target(target, defaults)
@@ -88,7 +90,7 @@ async def run_pipeline(
     review_dicts = [r.model_dump() for r in all_reviews]
     reviews_enriched = enrich_reviews_sentiment(review_dicts)
 
-    products_csv = df.head(80).to_csv(index=False) if not df.empty else ""
+    products_csv = df.head(300).to_csv(index=False) if not df.empty else ""
     news_lines = "\n".join(f"- {n.title} ({n.link or n.url})" for n in all_news) if all_news else ""
     if not reviews_enriched.empty:
         g = reviews_enriched.groupby("target_id")["composite_buy_score"].mean()
@@ -135,11 +137,11 @@ async def run_pipeline(
     if not reviews_enriched.empty:
         extra_sections.append(("Review sentiment sample", reviews_enriched.head(40).to_csv(index=False)))
 
-    preview_cols = [c for c in ["target_id", "url", "title", "price", "currency", "price_outlier"] if c in df.columns]
+    preview_cols = [c for c in ["title", "url", "original_price", "price", "currency", "target_id", "price_outlier"] if c in df.columns]
     if df.empty:
         table_data: list[list[Any]] = []
     else:
-        sub = df[preview_cols].head(25) if preview_cols else df.head(25)
+        sub = df[preview_cols].head(200) if preview_cols else df.head(200)
         table_data = [sub.columns.tolist()] + sub.values.tolist()
 
     reports_dir = settings.data_dir / "reports"

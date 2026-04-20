@@ -20,7 +20,22 @@ targets:
         price: "p.price_color"  # Lấy giá tiền kèm ký hiệu bảng Anh
         link: "h3 a"            # Lấy đường dẫn chi tiết
         availability: ".availability" # Kiểm tra còn hàng hay không
-
+  - id: "tgdd_flash_sale"
+    kind: "playwright"    
+    urls:
+      - "https://www.thegioididong.com/flashsale" 
+    selectors:
+      wait_for: "div.item" 
+      # Lấy thẻ div chứa link sản phẩm
+      item: "div.item"
+      # Tên sản phẩm
+      title_within: "h3, .name"
+      # Giá 
+      price_within: ".price, strong, .giacu"
+      # Giá cũ
+      original_price_within: ".price-old"
+      # Link sản phẩm
+      link_within: "a"
   # # Example: JS-heavy listing (Playwright) — tune wait_selector for your site
   # - id: demo_listing_js
   #   kind: playwright

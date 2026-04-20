@@ -5,7 +5,6 @@ from typing import Any
 
 from selectolax.parser import HTMLParser, Node
 
-
 def first_text(node: Node | None, selector: str) -> str | None:
     if not node or not selector:
         return None
@@ -14,7 +13,6 @@ def first_text(node: Node | None, selector: str) -> str | None:
         return None
     t = el.text(strip=True)
     return t or None
-
 
 def parse_price(text: str | None) -> tuple[float | None, str | None]:
     if not text:
@@ -29,14 +27,16 @@ def parse_price(text: str | None) -> tuple[float | None, str | None]:
     if "₫" in text or "đ" in text.lower():
         currency = "VND"
     digits = re.sub(r"[^\d.,]", "", text)
-    digits = digits.replace(",", "")
+    if currency == "VND":
+        digits = digits.replace(".", "").replace(",", "")
+    else:
+        digits = digits.replace(",", "")
     if not digits:
         return None, currency
     try:
         return float(digits), currency
     except ValueError:
         return None, currency
-
 
 def parse_float_loose(text: str | None) -> float | None:
     if not text:
@@ -48,7 +48,6 @@ def parse_float_loose(text: str | None) -> float | None:
         return float(m.group(0))
     except ValueError:
         return None
-
 
 def extract_specs(root: Node, specs_map: dict[str, Any]) -> dict[str, str]:
     out: dict[str, str] = {}

@@ -78,6 +78,11 @@ class HttpxScraper:
             title = first_text(tree.body, title_sel)
             price_text = first_text(tree.body, price_sel) if price_sel else None
             price, currency = parse_price(price_text)
+            
+            orig_price_sel = str(sel.get("original_price") or "")
+            orig_price_text = first_text(tree.body, orig_price_sel) if orig_price_sel else None
+            original_price, _ = parse_price(orig_price_text)
+            
             specs_map = sel.get("specs") or {}
             specs = extract_specs(tree.body, specs_map)
 
@@ -87,6 +92,7 @@ class HttpxScraper:
                     url=url,
                     title=title,
                     price=price,
+                    original_price=original_price,
                     currency=currency,
                     specs=specs,
                     scraped_at=utc_now(),
@@ -149,9 +155,13 @@ class HttpxScraper:
             price_text = first_text(node, price_sel) if price_sel else None
             price, currency = parse_price(price_text)
 
+            orig_price_sel = str(sels.get("original_price") or "")
+            orig_price_text = first_text(node, orig_price_sel) if orig_price_sel else None
+            original_price, _ = parse_price(orig_price_text)
+
             specs: dict[str, str] = {}
             for key, sel in sels.items():
-                if key in ("title", "price", "link"):
+                if key in ("title", "price", "original_price", "link"):
                     continue
                 val = first_text(node, str(sel))
                 if val:
@@ -164,6 +174,7 @@ class HttpxScraper:
                     url=item_url,
                     title=title,
                     price=price,
+                    original_price=original_price,
                     currency=currency,
                     specs=specs,
                     scraped_at=utc_now(),
