@@ -47,29 +47,45 @@ class PlaywrightScraper:
                     except Exception as e:
                         logger.warning("wait_for selector missing url=%s sel=%s err=%s", url, wait_for, e)
                     if "thegioididong.com" in url:
-                        # Cuộn xuống một chút để kích hoạt Render
+                        # Chờ page load ổn định
+                        await asyncio.sleep(3)
                         await page.evaluate("window.scrollTo(0, 500);") 
-                        await asyncio.sleep(2)
+                        await asyncio.sleep(1)
                         
                         max_items = int(sel.get("max_items", 40))
                         item_sel = str(sel.get("item") or "li.item")
                         
-                        for click_idx in range(50): # Allow up to 50 clicks for TGDD
+                        for click_idx in range(60): # Allow up to 60 clicks for TGDD
                             try:
-                                current_count = await page.evaluate(f"document.querySelectorAll('{item_sel}').length")
+                                # Đếm số lượng item (ưu tiên data-id hoặc item selector)
+                                current_count = await page.evaluate(f"document.querySelectorAll('{item_sel}, li[data-id]').length")
                                 if current_count >= max_items:
                                     logger.info("Reached target item count (%d >= %d) for TGDD", current_count, max_items)
                                     break
                                     
-                                btn = await page.query_selector(".see-more-btn, .view-more")
+                                # Tìm nút Xem thêm với nhiều class phổ biến của TGDD
+                                btn = await page.query_selector(".see-more-btn, .view-more, .btn-view-more, a.viewmore")
                                 if btn and await btn.is_visible():
                                     await page.evaluate("el => el.scrollIntoView({block: 'center'})", btn)
                                     await asyncio.sleep(1)
-                                    await page.evaluate("el => el.click()", btn)
-                                    await asyncio.sleep(3)
-                                    await page.evaluate("window.scrollBy(0, 300);")
+                                    
+                                    # Click giả lập người dùng
+                                    try:
+                                        await btn.click(force=True, timeout=5000)
+                                    except:
+                                        await page.evaluate("el => el.click()", btn)
+                                        
+                                    # Chờ load và "rung" trang để kích hoạt lazy-load
+                                    await asyncio.sleep(4)
+                                    await page.evaluate("window.scrollBy(0, 200);")
+                                    await asyncio.sleep(0.5)
+                                    await page.evaluate("window.scrollBy(0, -200);")
                                 else:
-                                    break
+                                    # Thử cuộn xuống cuối trang nếu không thấy nút (đôi khi nút tự hiện khi scroll)
+                                    await page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
+                                    await asyncio.sleep(2)
+                                    if not await page.query_selector(".see-more-btn, .view-more"):
+                                        break
                             except Exception as e:
                                 logger.warning("Error clicking show more on TGDD: %s", e)
                                 break

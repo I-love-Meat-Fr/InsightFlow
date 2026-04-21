@@ -14,12 +14,12 @@ targets:
       - "https://www.thegioididong.com/dtdd"
     selectors:
       max_items: 1000
-      wait_for: "ul.listproduct"
-      item: "li.item"
-      title_within: "h3"
-      price_within: ".price"
+      wait_for: "ul.listproduct, .listproduct"
+      item: "li.item, li[data-id]"
+      title_within: "h3, .name, a.main-contain h3"
+      price_within: ".price, strong"
       original_price_within: ".price-old"
-      link_within: "a.main-contain"
+      link_within: "a.main-contain, a"
   - id: "tgdd_flash_sale"
     kind: "playwright"    
     urls:
@@ -42,6 +42,17 @@ targets:
       - "https://cellphones.com.vn/mobile.html"
     selectors:
       max_items: 1009
+      wait_for: ".product-item, .product-info"
+      item: ".product-item, .product-info, .product-info-container"
+      title_within: ".product__name, h3, .name"
+      price_within: ".product__price--show, .price, .show-price"
+      original_price_within: ".product__price--through, .price-old"
+      link_within: "a"
+  - id: "tgdd_laptop"
+    kind: "playwright"
+    urls:
+      - "https://www.thegioididong.com/laptop#c=44&o=13&pi=3"
+    selectors:
       wait_for: ".product-item, .product-info"
       item: ".product-item, .product-info, .product-info-container"
       title_within: ".product__name, h3, .name"

@@ -26,15 +26,32 @@ class HistoryStore:
         if not rows:
             logger.info("No product rows; skip history parquet write")
             return path
+        
         for row in rows:
             if "specs" in row:
                 if not row["specs"] or not isinstance(row["specs"], dict):
                     row["specs"] = {"status": "no_specs"} 
-        df = pd.DataFrame(rows)
-        if "scraped_at" in df.columns:
-            df["scraped_at"] = pd.to_datetime(df["scraped_at"], utc=True)
+        
+        new_df = pd.DataFrame(rows)
+        if "scraped_at" in new_df.columns:
+            new_df["scraped_at"] = pd.to_datetime(new_df["scraped_at"], utc=True)
+            
+        if path.exists():
+            try:
+                old_df = pd.read_parquet(path)
+                # Ghép dữ liệu mới vào cũ
+                df = pd.concat([old_df, new_df], ignore_index=True)
+                # Loại bỏ trùng lặp nếu trùng cả URL và Target ID
+                if "url" in df.columns and "target_id" in df.columns:
+                    df = df.drop_duplicates(subset=["target_id", "url"], keep="last")
+            except Exception as e:
+                logger.error("Failed to read existing history parquet %s: %s", path, e)
+                df = new_df
+        else:
+            df = new_df
+            
         df.to_parquet(path, index=False)
-        logger.info("Wrote product history %s rows=%s", path, len(df))
+        logger.info("Updated product history %s total_rows=%s (new=%s)", path, len(df), len(new_df))
         return path
 
     def load_latest_before(self, day: date | None = None) -> pd.DataFrame:
