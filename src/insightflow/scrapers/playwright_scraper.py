@@ -47,9 +47,33 @@ class PlaywrightScraper:
                     except Exception as e:
                         logger.warning("wait_for selector missing url=%s sel=%s err=%s", url, wait_for, e)
                     if "thegioididong.com" in url:
-                        # Cuộn xuống một chút để kích hoạt Render Flash Sale/Danh sách sản phẩm
-                        await page.evaluate("window.scrollTo(0, 800);") 
-                        await asyncio.sleep(2) # Chờ 2 giây để các component load xong
+                        # Cuộn xuống một chút để kích hoạt Render
+                        await page.evaluate("window.scrollTo(0, 500);") 
+                        await asyncio.sleep(2)
+                        
+                        max_items = int(sel.get("max_items", 40))
+                        item_sel = str(sel.get("item") or "li.item")
+                        
+                        for click_idx in range(50): # Allow up to 50 clicks for TGDD
+                            try:
+                                current_count = await page.evaluate(f"document.querySelectorAll('{item_sel}').length")
+                                if current_count >= max_items:
+                                    logger.info("Reached target item count (%d >= %d) for TGDD", current_count, max_items)
+                                    break
+                                    
+                                btn = await page.query_selector(".see-more-btn, .view-more")
+                                if btn and await btn.is_visible():
+                                    await page.evaluate("el => el.scrollIntoView({block: 'center'})", btn)
+                                    await asyncio.sleep(1)
+                                    await page.evaluate("el => el.click()", btn)
+                                    await asyncio.sleep(3)
+                                    await page.evaluate("window.scrollBy(0, 300);")
+                                else:
+                                    break
+                            except Exception as e:
+                                logger.warning("Error clicking show more on TGDD: %s", e)
+                                break
+                                
                     elif "cellphones.com.vn" in url:
                         # Chờ page load ổn định
                         try:
@@ -57,22 +81,66 @@ class PlaywrightScraper:
                         except:
                             pass
                             
-                        # Click the show more button until it's no longer visible
-                        for _ in range(20):
+                        # Click the show more button until it's no longer visible or we reach max_items
+                        max_items = int(sel.get("max_items", 40))
+                        item_sel = str(sel.get("item") or "")
+                        
+                        for click_idx in range(100): # Allow up to 100 clicks (~2000-3000 items)
                             try:
-                                # Kiểm tra xem page có đang bị chuyển hướng không
-                                if "/mobile.html" in page.url and "/mobile/" not in url:
-                                    # Nếu url gốc có /mobile/brand.html mà giờ là /mobile.html -> bị redirect
+                                # Kiểm tra số lượng item hiện tại
+                                if item_sel:
+                                    current_items = await page.query_selector_all(item_sel)
+                                    if len(current_items) >= max_items:
+                                        logger.info("Reached target item count (%d >= %d) for %s", len(current_items), max_items, url)
+                                        break
+                                
+                                # Kiểm tra xem page có đang bị chuyển hướng không (chỉ break nếu đang crawl brand mà bị về mobile.html)
+                                if "/mobile.html" in page.url and "/mobile/" in url and "/mobile.html" not in url:
                                     logger.warning("Redirected from %s to %s, stopping show more", url, page.url)
                                     break
 
+                                # Đóng các popup che chắn nếu có
+                                await page.evaluate("""() => {
+                                    const overlay = document.querySelector('#subscriberEmailOverlay');
+                                    if (overlay) overlay.style.display = 'none';
+                                    const modal = document.querySelector('#subscriberEmail');
+                                    if (modal) modal.style.display = 'none';
+                                }""")
+
                                 btn = await page.query_selector("div.cps-block-content_btn-showmore")
                                 if btn and await btn.is_visible():
-                                    await btn.click()
-                                    # Chờ một chút để DOM cập nhật hoặc navigation nếu có
-                                    await asyncio.sleep(2)
+                                    # Cuộn tới nút và di chuyển chuột tới đó để giả lập người dùng
+                                    await page.evaluate("el => el.scrollIntoView({block: 'center'})", btn)
+                                    await asyncio.sleep(1)
+                                    
+                                    # Click mạnh hơn bằng force=True
+                                    try:
+                                        await btn.click(force=True, timeout=5000)
+                                    except:
+                                        await page.evaluate("el => el.click()", btn)
+                                    
+                                    # Chờ load và cuộn nhẹ để kích hoạt lazy-load
+                                    await asyncio.sleep(4)
+                                    await page.evaluate("window.scrollBy(0, 300);")
+                                    await asyncio.sleep(0.5)
+                                    await page.evaluate("window.scrollBy(0, -300);")
+                                    
+                                    # Đếm số lượng item (ưu tiên data-id vì nó rất ổn định)
+                                    count = await page.evaluate(f"document.querySelectorAll('{item_sel}, [data-id]').length")
+                                    
+                                    if click_idx % 5 == 0:
+                                        logger.info("Clicked show more %d times for %s (detected items: %d)...", click_idx + 1, url, count)
+                                    
+                                    if count >= max_items:
+                                        logger.info("Reached target item count (%d >= %d) for %s", count, max_items, url)
+                                        break
                                 else:
-                                    break
+                                    # Nếu không thấy nút, có thể đã hết hoặc cần cuộn thêm
+                                    await page.evaluate("window.scrollTo(0, document.body.scrollHeight);")
+                                    await asyncio.sleep(2)
+                                    btn_check = await page.query_selector("div.cps-block-content_btn-showmore")
+                                    if not btn_check:
+                                        break
                             except Exception as e:
                                 if "destroyed" in str(e) or "navigation" in str(e).lower():
                                     logger.warning("Context destroyed during show more for %s, waiting...", url)

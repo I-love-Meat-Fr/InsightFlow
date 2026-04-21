@@ -40,6 +40,7 @@ def shopee_crawl(
 @app.command("run")
 def run(
     config: Path = typer.Option(Path("config/targets.yaml"), "--config", "-c", help="Path to targets YAML"),
+    target_id: str | None = typer.Option(None, "--target", "-t", help="Run only this target ID"),
     no_send: bool = typer.Option(False, "--no-send", help="Do not send Telegram/email"),
     no_llm: bool = typer.Option(False, "--no-llm", help="Skip LLM; stub digest in PDF"),
 ) -> None:
@@ -53,6 +54,14 @@ def run(
         raise typer.Exit(1)
 
     tf = load_targets_file(config)
+    if target_id:
+        original_count = len(tf.targets)
+        tf.targets = [t for t in tf.targets if t.id == target_id]
+        if not tf.targets:
+            console.print(f"[red]Target ID '{target_id}' not found in config.[/red]")
+            raise typer.Exit(1)
+        console.print(f"Filtered to target [bold cyan]{target_id}[/bold cyan] (1/{original_count})")
+        
     crawl_total = max(1, len(tf.targets))
 
     async def _go() -> None:

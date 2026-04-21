@@ -99,7 +99,7 @@ if list_of_files:
             if not edited_df.equals(display_df):
                 df.update(edited_df)
             
-        st.info("💡 Select products in the table above and go to the **'Compare Selected'** tab to see the comparison dashboard.")
+        st.info("Select products in the table above and go to the **'Compare Selected'** tab to see the comparison dashboard.")
 
     with tab5:
         st.subheader("Comparison Dashboard")

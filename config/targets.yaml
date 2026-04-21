@@ -8,6 +8,18 @@ defaults:
   user_agent: "InsightFlow/0.1 (educational; respect robots.txt)"
 
 targets:
+  - id: "tgdd_mobile"
+    kind: "playwright"
+    urls:
+      - "https://www.thegioididong.com/dtdd"
+    selectors:
+      max_items: 1000
+      wait_for: "ul.listproduct"
+      item: "li.item"
+      title_within: "h3"
+      price_within: ".price"
+      original_price_within: ".price-old"
+      link_within: "a.main-contain"
   - id: "tgdd_flash_sale"
     kind: "playwright"    
     urls:
@@ -24,159 +36,246 @@ targets:
       original_price_within: ".price-old"
       # Link sản phẩm
       link_within: "a"
-  - id: "cellphones_apple"
+  - id: "cellphones"
     kind: "playwright"
     urls:
-      - "https://cellphones.com.vn/mobile/apple.html"
+      - "https://cellphones.com.vn/mobile.html"
     selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  - id: "cellphones_samsung"
-    kind: "playwright"
-    urls:
-      - "https://cellphones.com.vn/mobile/samsung.html"
-    selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  - id: "cellphones_xiaomi"
-    kind: "playwright"
-    urls:
-      - "https://cellphones.com.vn/mobile/xiaomi.html"
-    selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  - id: "cellphones_oppo"
-    kind: "playwright"
-    urls:
-      - "https://cellphones.com.vn/mobile/oppo.html"
-    selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  - id: "cellphones_tecno"
-    kind: "playwright"
-    urls:
-      - "https://cellphones.com.vn/mobile/tecno.html"
-    selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  - id: "cellphones_honor"
-    kind: "playwright"
-    urls:
-      - "https://cellphones.com.vn/mobile/honor.html"
-    selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  - id: "cellphones_nubia"
-    kind: "playwright"
-    urls:
-      - "https://cellphones.com.vn/mobile/nubia.html"
-    selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  - id: "cellphones_sony"
-    kind: "playwright"
-    urls:
-      - "https://cellphones.com.vn/mobile/sony.html"
-    selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  - id: "cellphones_nokia"
-    kind: "playwright"
-    urls:
-      - "https://cellphones.com.vn/mobile/nokia.html"
-    selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  - id: "cellphones_infinix"
-    kind: "playwright"
-    urls:
-      - "https://cellphones.com.vn/mobile/infinix.html"
-    selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  - id: "cellphones_nothing_phone"
-    kind: "playwright"
-    urls:
-      - "https://cellphones.com.vn/mobile/nothing-phone.html"
-    selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  - id: "cellphones_masstel"
-    kind: "playwright"
-    urls:
-      - "https://cellphones.com.vn/mobile/masstel.html"
-    selectors:
-      wait_for: ".product-info-container"
-      item: ".product-info-container"
-      title_within: ".product__name h3"
-      price_within: ".product__price--show"
-      original_price_within: ".product__price--through"
-      link_within: "a.product__link"
-  # # Example: JS-heavy listing (Playwright) — tune wait_selector for your site
-  # - id: demo_listing_js
-  #   kind: playwright
+      max_items: 1009
+      wait_for: ".product-item, .product-info"
+      item: ".product-item, .product-info, .product-info-container"
+      title_within: ".product__name, h3, .name"
+      price_within: ".product__price--show, .price, .show-price"
+      original_price_within: ".product__price--through, .price-old"
+      link_within: "a"
+  # - id: "cellphones_apple"
+  #   kind: "playwright"
   #   urls:
-  #     - "https://example.com/"
+  #     - "https://cellphones.com.vn/mobile/apple.html"
   #   selectors:
-  #     wait_for: "body"
-  #     item: "article"
-  #     title_within: "h2"
-  #     price_within: ".price"
-  #     link_within: "a"
-  #   reviews:
-  #     selector: ".review-text"
-  #     rating_selector: ".stars"
-
-  # # News-style static pages
-  # - id: demo_news
-  #   kind: httpx
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_samsung"
+  #   kind: "playwright"
   #   urls:
-  #     - "https://example.com/"
-  #   news:
-  #     list_selector: "article"
-  #     title_selector: "h2"
-  #     link_selector: "a"
+  #     - "https://cellphones.com.vn/mobile/samsung.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_xiaomi"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/xiaomi.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_oppo"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/oppo.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_tecno"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/tecno.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_honor"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/honor.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_nubia"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/nubia.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_sony"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/sony.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_nokia"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/nokia.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_infinix"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/infinix.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_nothing_phone"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/nothing-phone.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_masstel"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/masstel.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_realme"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/realme.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_itel"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/itel.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_huawei"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/huawei.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_meizu"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/meizu.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_vivo"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/vivo.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_oneplus"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/oneplus.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_tcl"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/tcl.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_benco"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/benco.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
+  # - id: "cellphones_asus"
+  #   kind: "playwright"
+  #   urls:
+  #     - "https://cellphones.com.vn/mobile/asus.html"
+  #   selectors:
+  #     wait_for: ".product-info-container"
+  #     item: ".product-info-container"
+  #     title_within: ".product__name h3"
+  #     price_within: ".product__price--show"
+  #     original_price_within: ".product__price--through"
+  #     link_within: "a.product__link"
