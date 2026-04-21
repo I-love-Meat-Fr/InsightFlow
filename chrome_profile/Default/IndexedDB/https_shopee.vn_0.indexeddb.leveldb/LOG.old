@@ -1,3 +1,6 @@
-2026/04/20-16:14:36.991 7de0 Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/https_shopee.vn_0.indexeddb.leveldb/MANIFEST-000001
-2026/04/20-16:14:36.991 7de0 Recovering log #7
-2026/04/20-16:14:36.999 7de0 Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/https_shopee.vn_0.indexeddb.leveldb/000007.log 
+2026/04/21-14:39:12.275 14e1 Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/https_shopee.vn_0.indexeddb.leveldb/MANIFEST-000001
+2026/04/21-14:39:12.275 14e1 Recovering log #25
+2026/04/21-14:39:12.289 14e1 Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/https_shopee.vn_0.indexeddb.leveldb/000025.log 
+2026/04/21-14:40:52.668 14e3 Level-0 table #30: started
+2026/04/21-14:40:52.684 14e3 Level-0 table #30: 1719222 bytes OK
+2026/04/21-14:40:52.689 14e3 Delete type=0 #25

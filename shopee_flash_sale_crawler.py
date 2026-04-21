@@ -6,6 +6,10 @@ import pandas as pd
 import re
 from selectolax.parser import HTMLParser
 from datetime import datetime
+import socket
+
+# Increase global socket timeout to 5 minutes to prevent 'Read timed out' on heavy pages
+socket.setdefaulttimeout(300)
 
 def parse_html(html, timeline_info):
     tree = HTMLParser(html)
@@ -63,14 +67,34 @@ def crawl_shopee_flash_sale():
     from selenium.webdriver.common.by import By
     from playwright.sync_api import sync_playwright
     
+    # Force kill any existing chrome processes that might be locking the profile
+    import subprocess
+    try:
+        subprocess.run(["pkill", "-f", "chrome"], capture_output=True)
+        subprocess.run(["pkill", "-f", "chromedriver"], capture_output=True)
+        time.sleep(1)
+    except:
+        pass
+
     # Locate Playwright's Chromium binary so we don't need system Chrome installed
     with sync_playwright() as p:
         chromium_path = p.chromium.executable_path
 
     options = uc.ChromeOptions()
+    # Clean up old profile lock if it exists
+    lock_file = "./chrome_profile/SingletonLock"
+    if os.path.exists(lock_file):
+        try: os.remove(lock_file)
+        except: pass
+
     options.add_argument("--user-data-dir=./chrome_profile")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     
     driver = uc.Chrome(options=options, headless=False, browser_executable_path=chromium_path, version_main=145)
+    driver.set_page_load_timeout(180)
+    driver.set_script_timeout(180)
     
     try:
         url = "https://shopee.vn/flash_sale"
@@ -123,16 +147,36 @@ def crawl_shopee_flash_sale():
             print("Waiting for products to render...")
             time.sleep(5)
             
-            print("Scrolling page to trigger lazy-loading of products...")
-            for _ in range(10):
+            print("Scrolling page to load all products (adaptive)...")
+            last_count = 0
+            no_new_data_counter = 0
+            
+            for scroll_idx in range(100): # Safety cap of 100 scrolls
                 driver.execute_script("window.scrollBy(0, 1000);")
-                time.sleep(1)
+                time.sleep(1.0)
+                
+                # Every 4 scrolls, check if we've found more products
+                if scroll_idx % 4 == 0:
+                    html = driver.page_source
+                    current_count = len(parse_html(html, timeline_info))
+                    
+                    if current_count > last_count:
+                        last_count = current_count
+                        no_new_data_counter = 0
+                        print(f"  Progress: {current_count} products found...")
+                    else:
+                        no_new_data_counter += 1
+                    
+                    # If no new products for ~12 scrolls (3 checks), stop
+                    if no_new_data_counter >= 3 and last_count > 20:
+                        print(f"  Reached bottom for {timeline_info} at {last_count} products.")
+                        break
             
             time.sleep(2)
             
             html = driver.page_source
             products = parse_html(html, timeline_info)
-            print(f"Extracted {len(products)} products for {timeline_info}")
+            print(f"Final extraction: {len(products)} products for {timeline_info}")
             all_products.extend(products)
             
             # Scroll back to top for the next tab iteration

@@ -1,6 +1,6 @@
-2026/04/20-19:03:58.048 a959 Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Local Storage/leveldb/MANIFEST-000001
-2026/04/20-19:03:58.057 a959 Recovering log #12
-2026/04/20-19:03:58.058 a959 Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Local Storage/leveldb/000012.log 
-2026/04/20-19:04:59.099 a959 Level-0 table #17: started
-2026/04/20-19:04:59.106 a959 Level-0 table #17: 28038 bytes OK
-2026/04/20-19:04:59.111 a959 Delete type=0 #12
+2026/04/21-14:43:05.588 19fc Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Local Storage/leveldb/MANIFEST-000001
+2026/04/21-14:43:05.592 19fc Recovering log #50
+2026/04/21-14:43:05.593 19fc Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Local Storage/leveldb/000050.log 
+2026/04/21-14:47:19.057 1a02 Level-0 table #54: started
+2026/04/21-14:47:19.063 1a02 Level-0 table #54: 21110 bytes OK
+2026/04/21-14:47:19.068 1a02 Delete type=0 #50
