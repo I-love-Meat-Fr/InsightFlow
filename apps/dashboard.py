@@ -33,11 +33,20 @@ if file_pattern:
 if list_of_files:
     latest_file = max(list_of_files, key=os.path.getmtime)
     df = pd.read_parquet(latest_file)
+    
+    # Initialize Select column in session state if not present
+    if "Select" not in df.columns:
+        df.insert(0, "Select", False)
+    
+    # Ensure price is numeric for charts
+    if 'price' in df.columns:
+        df['price'] = pd.to_numeric(df['price'], errors='coerce')
 
     # --- TABS INITIALIZATION ---
-    tab1, tab2, tab3, tab4 = st.tabs([
+    tab1, tab2, tab5, tab3, tab4 = st.tabs([
         "Product List", 
-        "Price Analysis", 
+        "Price Analysis",
+        "Compare Selected",
         "Data Details", 
         "System Health"
     ])
@@ -45,25 +54,112 @@ if list_of_files:
     with tab1:
         st.subheader(f"Raw Data from System - {platform}")
         # Search filter
-        search_query = st.text_input("Filter by product name...", "")
+        search_query = st.text_input("Filter by product name...", "", key="search_input")
         
         display_df = df.copy()
         if search_query:
-            display_df = display_df[display_df['title'].str.contains(search_query, case=False)]
+            display_df = display_df[display_df['title'].str.contains(search_query, case=False, na=False)]
             
-        if 'timeline' in display_df.columns:
+        # Display data with selection support
+        if platform == "Shopee flash sale" and 'timeline' in display_df.columns:
             timelines = display_df['timeline'].dropna().unique()
             for i, timeline_val in enumerate(timelines):
                 st.markdown(f"### Timeline {i+1}: {timeline_val}")
                 timeline_df = display_df[display_df['timeline'] == timeline_val]
-                st.dataframe(timeline_df, use_container_width=True)
+                
+                edited_timeline_df = st.data_editor(
+                    timeline_df,
+                    column_config={
+                        "Select": st.column_config.CheckboxColumn("Compare", default=False),
+                        "url": st.column_config.LinkColumn("Product Link"),
+                        "price": st.column_config.NumberColumn("Price (VND)", format="%d"),
+                    },
+                    disabled=[col for col in display_df.columns if col != "Select"],
+                    hide_index=True,
+                    use_container_width=True,
+                    key=f"editor_shopee_{timeline_val}"
+                )
+                # Sync selections back to the main df
+                if not edited_timeline_df.equals(timeline_df):
+                    df.update(edited_timeline_df)
         else:
-            st.dataframe(display_df, use_container_width=True)
+            # Consolidated table for non-Shopee platforms
+            edited_df = st.data_editor(
+                display_df,
+                column_config={
+                    "Select": st.column_config.CheckboxColumn("Compare", default=False),
+                    "url": st.column_config.LinkColumn("Product Link"),
+                    "price": st.column_config.NumberColumn("Price (VND)", format="%d"),
+                },
+                disabled=[col for col in display_df.columns if col != "Select"],
+                hide_index=True,
+                use_container_width=True,
+                key="product_selector_editor"
+            )
+            if not edited_df.equals(display_df):
+                df.update(edited_df)
+            
+        st.info("💡 Select products in the table above and go to the **'Compare Selected'** tab to see the comparison dashboard.")
+
+    with tab5:
+        st.subheader("Comparison Dashboard")
+        selected_items = df[df["Select"] == True]
+        
+        if not selected_items.empty:
+            st.success(f"Comparing {len(selected_items)} selected products")
+            
+            st.divider()
+            
+            # Create a descriptive label for the chart (Name + Source)
+            chart_data = selected_items.copy()
+            def make_label(row):
+                source = row.get('target_id') or row.get('timeline') or "Unknown"
+                return f"{row['title'][:50]}... [{source}]" if len(str(row['title'])) > 50 else f"{row['title']} [{source}]"
+            
+            chart_data["Product & Source"] = chart_data.apply(make_label, axis=1)
+            
+            # Use vertical bar chart with combined labels as index
+            st.markdown("### Price Comparison (VND)")
+            st.bar_chart(chart_data.set_index("Product & Source")["price"])
+            
+            # Metrics for selected items
+            m_col1, m_col2, m_col3 = st.columns(3)
+            with m_col1:
+                st.metric("Highest Selected", f"{selected_items['price'].max():,.0f} VND")
+            with m_col2:
+                st.metric("Lowest Selected", f"{selected_items['price'].min():,.0f} VND")
+            with m_col3:
+                st.metric("Avg Selected", f"{selected_items['price'].mean():,.0f} VND")
+            
+            st.divider()
+            
+            # Detailed comparison table
+            st.markdown("### Selection Details")
+            cols_to_show = ["title", "price", "display_price", "target_id", "url", "timeline"]
+            available_cols = [c for c in cols_to_show if c in selected_items.columns]
+            st.dataframe(
+                selected_items[available_cols],
+                use_container_width=True,
+                hide_index=True
+            )
+            
+            if st.button("Clear Selections"):
+                df["Select"] = False
+                st.rerun()
+        else:
+            st.info("Please select items in the **Product List** tab first by checking the boxes in the 'Compare' column.")
 
     with tab2:
         st.subheader("Price Trends & Statistics")
         if 'price' in df.columns and not df.empty:
-            st.bar_chart(data=df, x='title', y='price')
+            # Prepare data for main chart
+            main_chart_df = df.copy()
+            def make_label_main(row):
+                source = row.get('target_id') or row.get('timeline') or ""
+                return f"{row['title'][:40]}... ({source})" if len(str(row['title'])) > 40 else f"{row['title']} ({source})"
+            main_chart_df["Product Info"] = main_chart_df.apply(make_label_main, axis=1)
+
+            st.bar_chart(main_chart_df.set_index("Product Info")["price"])
             
             col1, col2 = st.columns(2)
             avg_price = df['price'].mean() if not df['price'].isnull().all() else 0
@@ -101,7 +197,7 @@ if list_of_files:
 
         # --- SECTION 2: OPERATION LOGS ---
         st.subheader("System Logs (Real-time)")
-        if platform == "Shopee Flash Sale":
+        if platform == "Shopee flash sale":
             log_data = [
                 "2026-04-20 15:40:12 - INFO - Initializing undetected-chromedriver engine...",
                 "2026-04-20 15:40:15 - INFO - Accessing: https://shopee.vn/flash_sale",

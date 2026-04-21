@@ -8,7 +8,7 @@ build/
 .env
 data/
 logs/
-*.parquet
+# *.parquet
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
