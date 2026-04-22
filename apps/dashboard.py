@@ -34,6 +34,10 @@ if list_of_files:
     latest_file = max(list_of_files, key=os.path.getmtime)
     df = pd.read_parquet(latest_file)
     
+    # Remove large/unnecessary columns
+    cols_to_drop = ['specs_json', 'specs']
+    df = df.drop(columns=[c for c in cols_to_drop if c in df.columns])
+    
     # Initialize Select column in session state if not present
     if "Select" not in df.columns:
         df.insert(0, "Select", False)
@@ -82,8 +86,29 @@ if list_of_files:
                 # Sync selections back to the main df
                 if not edited_timeline_df.equals(timeline_df):
                     df.update(edited_timeline_df)
+        elif platform == "Đồ công nghệ" and 'target_id' in display_df.columns:
+            targets = display_df['target_id'].dropna().unique()
+            for i, target_val in enumerate(targets):
+                st.markdown(f"### Source: {target_val}")
+                target_df = display_df[display_df['target_id'] == target_val]
+                
+                edited_target_df = st.data_editor(
+                    target_df,
+                    column_config={
+                        "Select": st.column_config.CheckboxColumn("Compare", default=False),
+                        "url": st.column_config.LinkColumn("Product Link"),
+                        "price": st.column_config.NumberColumn("Price (VND)", format="%d"),
+                    },
+                    disabled=[col for col in display_df.columns if col != "Select"],
+                    hide_index=True,
+                    use_container_width=True,
+                    key=f"editor_tech_{target_val}"
+                )
+                # Sync selections back to the main df
+                if not edited_target_df.equals(target_df):
+                    df.update(edited_target_df)
         else:
-            # Consolidated table for non-Shopee platforms
+            # Consolidated table for other cases
             edited_df = st.data_editor(
                 display_df,
                 column_config={
