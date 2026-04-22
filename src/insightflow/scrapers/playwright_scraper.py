@@ -89,6 +89,77 @@ class PlaywrightScraper:
                             except Exception as e:
                                 logger.warning("Error clicking show more on TGDD: %s", e)
                                 break
+                    
+                    elif "fptshop.com.vn" in url:
+                        # FPT Shop: Gọi API trực tiếp để lấy toàn bộ sản phẩm
+                        # API: POST https://papi.fptshop.com.vn/gw/v1/public/fulltext-search-service/category
+                        import json as _json
+                        
+                        api_url = "https://papi.fptshop.com.vn/gw/v1/public/fulltext-search-service/category"
+                        slug = url.rstrip("/").split("/")[-1]  # "dien-thoai"
+                        page_size = 24
+                        skip = 0
+                        total = None
+                        
+                        while True:
+                            payload = _json.dumps({
+                                "skipCount": skip,
+                                "maxResultCount": page_size,
+                                "sortMethod": "noi-bat",
+                                "slug": slug,
+                                "categoryType": "category",
+                                "location": {}
+                            })
+                            
+                            # Gọi API từ browser context (giữ cookies/headers)
+                            resp_data = await page.evaluate(f"""async () => {{
+                                const resp = await fetch('{api_url}', {{
+                                    method: 'POST',
+                                    headers: {{'Content-Type': 'application/json'}},
+                                    body: '{payload}'
+                                }});
+                                return await resp.json();
+                            }}""")
+                            
+                            if total is None:
+                                total = resp_data.get("totalCount", 0)
+                                logger.info("FPT Shop API: Total products = %d", total)
+                            
+                            items = resp_data.get("items", [])
+                            if not items:
+                                break
+                            
+                            for item in items:
+                                item_name = item.get("name") or item.get("displayName") or ""
+                                item_slug = item.get("slug", "")
+                                item_url = f"https://fptshop.com.vn/{item_slug}" if item_slug else url
+                                current_price = item.get("currentPrice", 0)
+                                original_price = item.get("originalPrice", 0)
+                                
+                                products.append(
+                                    ProductSnapshot(
+                                        target_id=target.id,
+                                        url=item_url,
+                                        title=item_name,
+                                        price=float(current_price) if current_price else None,
+                                        original_price=float(original_price) if original_price else None,
+                                        currency="VND",
+                                        specs={},
+                                        scraped_at=utc_now(),
+                                        source_kind="playwright",
+                                    )
+                                )
+                            
+                            skip += page_size
+                            logger.info("FPT Shop API: Collected %d / %d", min(skip, total), total)
+                            
+                            if skip >= total:
+                                break
+                            
+                            await asyncio.sleep(0.5)  # Tránh rate limit
+                        
+                        logger.info("FPT Shop API: Done. Total products collected: %d", len(products))
+                        continue  # Bỏ qua generic extraction
                                 
                     elif "cellphones.com.vn" in url:
                         # Chờ page load ổn định
