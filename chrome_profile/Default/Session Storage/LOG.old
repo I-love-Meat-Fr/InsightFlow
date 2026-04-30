@@ -1,3 +1,5 @@
-2026/04/21-14:39:01.062 1525 Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Session Storage/MANIFEST-000001
-2026/04/21-14:39:01.063 1525 Recovering log #3
-2026/04/21-14:39:01.065 1525 Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Session Storage/000003.log 
+2026/04/30-11:07:04.549 d8d Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Session Storage/MANIFEST-000001
+2026/04/30-11:07:04.549 d8d Recovering log #3
+2026/04/30-11:07:04.550 d8d Level-0 table #3: started
+2026/04/30-11:07:04.556 d8d Level-0 table #3: 36790 bytes OK
+2026/04/30-11:07:04.561 d8d Delete type=0 #3
