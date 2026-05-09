@@ -1,12 +1,3 @@
-2026/04/30-11:07:06.939 d4d Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/https_shopee.vn_0.indexeddb.leveldb/MANIFEST-000001
-2026/04/30-11:07:06.939 d4d Recovering log #29
-2026/04/30-11:07:06.951 d4d Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/https_shopee.vn_0.indexeddb.leveldb/000029.log 
-2026/04/30-11:07:29.852 d4d Level-0 table #35: started
-2026/04/30-11:07:29.873 d4d Level-0 table #35: 1564667 bytes OK
-2026/04/30-11:07:29.880 d4d Delete type=0 #29
-2026/04/30-11:07:29.910 d4d Compacting 1@1 + 1@2 files
-2026/04/30-11:07:29.923 d4d Generated table #36@1: 346 keys, 81102 bytes
-2026/04/30-11:07:29.923 d4d Compacted 1@1 + 1@2 files => 81102 bytes
-2026/04/30-11:07:29.926 d4d compacted to: files[ 0 0 1 0 0 0 0 ]
-2026/04/30-11:07:29.927 d4d Delete type=2 #35
-2026/04/30-11:07:29.927 d4d Delete type=2 #32
+2026/05/09-08:07:28.768 3ea8 Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/https_shopee.vn_0.indexeddb.leveldb/MANIFEST-000001
+2026/05/09-08:07:28.769 3ea8 Recovering log #3
+2026/05/09-08:07:28.769 3ea8 Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/https_shopee.vn_0.indexeddb.leveldb/000003.log 

@@ -1,3 +1,2 @@
-2026/04/30-11:08:29.920 ead Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/GCM Store/MANIFEST-000001
-2026/04/30-11:08:29.921 ead Recovering log #3
-2026/04/30-11:08:29.921 ead Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/GCM Store/000003.log 
+2026/05/09-08:06:44.773 3eaa Creating DB /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/GCM Store since it was missing.
+2026/05/09-08:06:44.782 3eaa Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/GCM Store/MANIFEST-000001

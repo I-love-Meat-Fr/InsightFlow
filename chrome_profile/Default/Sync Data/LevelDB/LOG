@@ -1,3 +1,2 @@
-2026/04/30-11:08:23.783 ea2 Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Sync Data/LevelDB/MANIFEST-000001
-2026/04/30-11:08:23.784 ea2 Recovering log #3
-2026/04/30-11:08:23.784 ea2 Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Sync Data/LevelDB/000003.log 
+2026/05/09-08:06:30.455 3eaa Creating DB /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Sync Data/LevelDB since it was missing.
+2026/05/09-08:06:30.526 3eaa Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Sync Data/LevelDB/MANIFEST-000001

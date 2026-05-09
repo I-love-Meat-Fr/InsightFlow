@@ -76,22 +76,37 @@ def crawl_shopee_flash_sale():
     except:
         pass
 
-    # Locate Playwright's Chromium binary so we don't need system Chrome installed
-    with sync_playwright() as p:
-        chromium_path = p.chromium.executable_path
+    # Use Playwright's full Chromium binary (NOT headless_shell)
+    import pathlib
+    pw_cache = pathlib.Path.home() / ".cache" / "ms-playwright"
+    chromium_dirs = sorted(pw_cache.glob("chromium-*/chrome-linux64/chrome"))
+    if chromium_dirs:
+        chromium_path = str(chromium_dirs[-1])
+    else:
+        # Fallback to Playwright's default
+        with sync_playwright() as p:
+            chromium_path = p.chromium.executable_path
 
     options = uc.ChromeOptions()
-    # Clean up old profile lock if it exists
-    lock_file = "./chrome_profile/SingletonLock"
-    if os.path.exists(lock_file):
-        try: os.remove(lock_file)
-        except: pass
-
-    options.add_argument("--user-data-dir=./chrome_profile")
+    
+    # Use a persistent profile so login cookies are saved between runs
+    profile_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chrome_profile")
+    os.makedirs(profile_dir, exist_ok=True)
+    
+    # Only clean up lock files (NOT the whole profile — that has your cookies!)
+    for lock in ["SingletonLock", "SingletonCookie", "SingletonSocket"]:
+        lock_path = os.path.join(profile_dir, lock)
+        if os.path.exists(lock_path):
+            try: os.remove(lock_path)
+            except: pass
+    
+    options.add_argument(f"--user-data-dir={profile_dir}")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     
+    print(f"Using Chrome binary: {chromium_path}")
+    print(f"Using profile (cookies saved): {profile_dir}")
     driver = uc.Chrome(options=options, headless=False, browser_executable_path=chromium_path, version_main=145)
     driver.set_page_load_timeout(180)
     driver.set_script_timeout(180)
@@ -100,8 +115,8 @@ def crawl_shopee_flash_sale():
         url = "https://shopee.vn/flash_sale"
         print(f"Navigating to {url}")
         driver.get(url)
-        print("Page loaded. Waiting 10s for anti-bot checks to pass...")
-        time.sleep(10)
+        print("Page loaded. Waiting 30s for you to login...")
+        time.sleep(120)
         
         all_products = []
         
