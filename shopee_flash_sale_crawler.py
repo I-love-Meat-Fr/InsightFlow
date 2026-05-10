@@ -115,8 +115,8 @@ def crawl_shopee_flash_sale():
         url = "https://shopee.vn/flash_sale"
         print(f"Navigating to {url}")
         driver.get(url)
-        print("Page loaded. Waiting 30s for you to login...")
-        time.sleep(120)
+        print("Page loaded. Waiting 10s for you to login...")
+        time.sleep(10)
         
         all_products = []
         
@@ -166,14 +166,22 @@ def crawl_shopee_flash_sale():
             last_count = 0
             no_new_data_counter = 0
             
-            for scroll_idx in range(100): # Safety cap of 100 scrolls
-                driver.execute_script("window.scrollBy(0, 1000);")
-                time.sleep(1.0)
+            for scroll_idx in range(200):  # Safety cap of 200 scrolls
+                driver.execute_script("window.scrollBy(0, 2000);")
+                time.sleep(0.8)
                 
-                # Every 4 scrolls, check if we've found more products
+                # Every 4 scrolls, check if we've found more products (fast JS count)
                 if scroll_idx % 4 == 0:
-                    html = driver.page_source
-                    current_count = len(parse_html(html, timeline_info))
+                    current_count = driver.execute_script(
+                        "return document.querySelectorAll('a[href*=\"flash_sale\"] .shopee-search-item-result__item, "
+                        ".flash-sale-item-card, "
+                        "a[data-sqe]').length || "
+                        "document.querySelectorAll('a').length"
+                    )
+                    # Fallback: count via HTML parse if JS count seems off
+                    if current_count < 10:
+                        html = driver.page_source
+                        current_count = len(parse_html(html, timeline_info))
                     
                     if current_count > last_count:
                         last_count = current_count
@@ -182,8 +190,8 @@ def crawl_shopee_flash_sale():
                     else:
                         no_new_data_counter += 1
                     
-                    # If no new products for ~12 scrolls (3 checks), stop
-                    if no_new_data_counter >= 3 and last_count > 20:
+                    # If no new products for 5 consecutive checks (~20 scrolls), stop
+                    if no_new_data_counter >= 5 and last_count > 20:
                         print(f"  Reached bottom for {timeline_info} at {last_count} products.")
                         break
             

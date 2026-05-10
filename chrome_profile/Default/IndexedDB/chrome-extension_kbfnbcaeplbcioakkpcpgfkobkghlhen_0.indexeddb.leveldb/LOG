@@ -1,6 +1,3 @@
-2026/05/09-08:08:27.422 3ea8 Creating DB /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/chrome-extension_kbfnbcaeplbcioakkpcpgfkobkghlhen_0.indexeddb.leveldb since it was missing.
-2026/05/09-08:08:27.445 3ea8 Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/chrome-extension_kbfnbcaeplbcioakkpcpgfkobkghlhen_0.indexeddb.leveldb/MANIFEST-000001
-2026/05/09-08:08:30.468 3eb3 Level-0 table #5: started
-2026/05/09-08:08:30.472 3eb3 Level-0 table #5: 2000 bytes OK
-2026/05/09-08:08:30.481 3eb3 Delete type=0 #3
-2026/05/09-08:08:30.481 3eb2 Manual compaction at level-0 from '\x00\x01\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/05/09-08:30:36.905 59b9 Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/chrome-extension_kbfnbcaeplbcioakkpcpgfkobkghlhen_0.indexeddb.leveldb/MANIFEST-000001
+2026/05/09-08:30:36.905 59b9 Recovering log #4
+2026/05/09-08:30:36.906 59b9 Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/IndexedDB/chrome-extension_kbfnbcaeplbcioakkpcpgfkobkghlhen_0.indexeddb.leveldb/000004.log 

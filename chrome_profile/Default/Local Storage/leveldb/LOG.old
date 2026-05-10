@@ -1,0 +1,6 @@
+2026/05/09-08:28:17.742 5663 Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Local Storage/leveldb/MANIFEST-000001
+2026/05/09-08:28:17.746 5663 Recovering log #8
+2026/05/09-08:28:17.747 5663 Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Local Storage/leveldb/000008.log 
+2026/05/09-08:28:22.741 5665 Level-0 table #12: started
+2026/05/09-08:28:22.749 5665 Level-0 table #12: 24225 bytes OK
+2026/05/09-08:28:22.754 5665 Delete type=0 #8

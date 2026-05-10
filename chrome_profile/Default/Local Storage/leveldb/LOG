@@ -1,11 +1,18 @@
-2026/05/09-08:06:30.502 3ec9 Creating DB /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Local Storage/leveldb since it was missing.
-2026/05/09-08:06:30.534 3ec9 Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Local Storage/leveldb/MANIFEST-000001
-2026/05/09-08:06:45.534 3ec9 Level-0 table #5: started
-2026/05/09-08:06:45.541 3ec9 Level-0 table #5: 51025 bytes OK
-2026/05/09-08:06:45.544 3ec9 Delete type=0 #3
-2026/05/09-08:08:34.481 3ecf Level-0 table #7: started
-2026/05/09-08:08:34.486 3ecf Level-0 table #7: 31880 bytes OK
-2026/05/09-08:08:34.490 3ecf Delete type=0 #4
-2026/05/09-08:13:08.052 3ecf Level-0 table #9: started
-2026/05/09-08:13:08.065 3ecf Level-0 table #9: 20318 bytes OK
-2026/05/09-08:13:08.070 3ecf Delete type=0 #6
+2026/05/09-08:30:36.507 59dc Reusing MANIFEST /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Local Storage/leveldb/MANIFEST-000001
+2026/05/09-08:30:36.510 59dc Recovering log #11
+2026/05/09-08:30:36.510 59dc Reusing old log /home/quocanh/Workspace/InsightFlow/chrome_profile/Default/Local Storage/leveldb/000011.log 
+2026/05/09-08:31:32.879 59de Level-0 table #15: started
+2026/05/09-08:31:32.886 59de Level-0 table #15: 27057 bytes OK
+2026/05/09-08:31:32.892 59de Delete type=0 #11
+2026/05/09-08:36:17.134 59de Level-0 table #17: started
+2026/05/09-08:36:17.145 59de Level-0 table #17: 18294 bytes OK
+2026/05/09-08:36:17.150 59de Delete type=0 #14
+2026/05/09-08:36:17.150 59de Compacting 4@0 + 1@1 files
+2026/05/09-08:36:17.158 59de Generated table #18@0: 78 keys, 25450 bytes
+2026/05/09-08:36:17.158 59de Compacted 4@0 + 1@1 files => 25450 bytes
+2026/05/09-08:36:17.162 59de compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/05/09-08:36:17.163 59de Delete type=2 #12
+2026/05/09-08:36:17.163 59de Delete type=2 #17
+2026/05/09-08:36:17.163 59de Delete type=2 #7
+2026/05/09-08:36:17.163 59de Delete type=2 #9
+2026/05/09-08:36:17.163 59de Delete type=2 #15
